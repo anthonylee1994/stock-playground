@@ -1,3 +1,4 @@
+from typing import List
 import pandas as pd
 from sklearn import linear_model
 
@@ -5,11 +6,16 @@ from sklearn import linear_model
 class Estimator:
     fit_intercept: bool
     training_upto: str
-    feature_names: [str]
+    feature_names: List[str]
     target_name: str
     data: pd.DataFrame
 
-    def __init__(self, feature_names: [str], target_name: str, training_upto: str, data: pd.DataFrame, fit_intercept: bool = False):
+    def __init__(self,
+                 feature_names: List[str],
+                 target_name: str,
+                 training_upto: str,
+                 data: pd.DataFrame,
+                 fit_intercept: bool = False):
         self.feature_names = feature_names
         self.target_name = target_name
         self.data = data
@@ -25,12 +31,17 @@ class Estimator:
     def estimate(self) -> pd.Series:
         training_data = self.training_data()
         testing_data = self.testing_data()
-        regression = linear_model.LinearRegression(fit_intercept=self.fit_intercept, n_jobs=10)
-        regression.fit(training_data[self.feature_names], training_data[self.target_name])
+        regression = linear_model.LinearRegression(
+            fit_intercept=self.fit_intercept, n_jobs=10)
+        regression.fit(training_data[self.feature_names],
+                       training_data[self.target_name])
 
-        full_confidence = regression.score(self.data[self.feature_names], self.data[self.target_name])
-        training_confidence = regression.score(training_data[self.feature_names], training_data[self.target_name])
-        testing_confidence = regression.score(testing_data[self.feature_names], testing_data[self.target_name])
+        full_confidence = regression.score(self.data[self.feature_names],
+                                           self.data[self.target_name])
+        training_confidence = regression.score(
+            training_data[self.feature_names], training_data[self.target_name])
+        testing_confidence = regression.score(testing_data[self.feature_names],
+                                              testing_data[self.target_name])
 
         prediction = regression.predict(self.data[self.feature_names])
 
