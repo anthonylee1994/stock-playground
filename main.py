@@ -31,13 +31,16 @@ df.dropna(inplace=True)
 all_features = base_features + crawler.features
 
 print('[LOW]')
-df['Low-E'] = Estimator(all_features, 'Low', training_upto, df, fit_intercept).estimate()
+df['Low-E'] = Estimator(all_features, 'Low', training_upto, df,
+                        fit_intercept).estimate()
 
 print('[MEAN]')
-df['Mean-E'] = Estimator(all_features, 'Mean', training_upto, df, fit_intercept).estimate()
+df['Mean-E'] = Estimator(all_features, 'Mean', training_upto, df,
+                         fit_intercept).estimate()
 
 print('[HIGH]')
-df['High-E'] = Estimator(all_features, 'High', training_upto, df, fit_intercept).estimate()
+df['High-E'] = Estimator(all_features, 'High', training_upto, df,
+                         fit_intercept).estimate()
 
 df[['Mean', 'Mean-E', 'Low-E', 'High-E']].plot()
 

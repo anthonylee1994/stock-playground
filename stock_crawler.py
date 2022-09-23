@@ -51,7 +51,7 @@ class StockCrawler:
         self.features.append(symbol)
         return self
 
-    def add_features(self, symbols: [str], rolling_period: int = 21):
+    def add_features(self, symbols: List[str], rolling_period: int = 21):
         for symbol in symbols:
             self.add_feature(symbol, rolling_period)
         return self
