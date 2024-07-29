@@ -1,47 +1,40 @@
-import matplotlib.pyplot as plt
+import yfinance as yf
 import pandas as pd
+import warnings
 
-from estimator import Estimator
-from stock_crawler import StockCrawler
+warnings.filterwarnings('ignore')
 
-symbol = 'AMZN'
-training_upto: str = '2017-12-31'
-fit_intercept: bool = False
-pd.options.mode.chained_assignment = None
 
-base_features = ['SPS']
+def fetch_data(ticker):
+    stock = yf.Ticker(ticker)
+    return stock.history(period='12mo', interval='1d')
 
-crawler = StockCrawler(symbol)
+def td_sequential(data):
+    data['td_buy_setup'] = 0
+    data['td_sell_setup'] = 0
+    
+    for i in range(4, len(data)):
+        if (data['Close'].iloc[i] < data['Close'].iloc[i-4]):
+            data['td_buy_setup'].iloc[i] = data['td_buy_setup'].iloc[i-1] + 1
+        else:
+            data['td_buy_setup'].iloc[i] = 0
+            
+        if (data['Close'].iloc[i] > data['Close'].iloc[i-4]):
+            data['td_sell_setup'].iloc[i] = data['td_sell_setup'].iloc[i-1] + 1
+        else:
+            data['td_sell_setup'].iloc[i] = 0
+    
+    return data
 
-df = crawler \
-    .add_fundamentals() \
-    .add_prices() \
-    .add_feature('UUP', 21) \
-    .table()
+sp500 = pd.read_csv('https://raw.githubusercontent.com/datasets/s-and-p-500-companies/main/data/constituents.csv')
+tickers = sp500['Symbol'].tolist()
+tickers = list(map(lambda x: x.replace('.', '-'), tickers))
 
-df = df[df.index >= '2010-01-01']
-
-df['Mean'] = df['Close'].rolling(21).mean()
-df['Std'] = df['Close'].rolling(252).std()
-df['Low'] = df['Mean'] - df['Std']
-df['High'] = df['Close'] + df['Std']
-
-df.dropna(inplace=True)
-
-all_features = base_features + crawler.features
-
-print('[LOW]')
-df['Low-E'] = Estimator(all_features, 'Low', training_upto, df,
-                        fit_intercept).estimate()
-
-print('[MEAN]')
-df['Mean-E'] = Estimator(all_features, 'Mean', training_upto, df,
-                         fit_intercept).estimate()
-
-print('[HIGH]')
-df['High-E'] = Estimator(all_features, 'High', training_upto, df,
-                         fit_intercept).estimate()
-
-df[['Mean', 'Mean-E', 'Low-E', 'High-E']].plot()
-
-plt.show()
+for ticker in tickers:
+    try:
+        data = fetch_data(ticker)
+        data = td_sequential(data)
+        if data['td_buy_setup'].iloc[-1] == 9:
+            print(f'{ticker} is on a TD Buy Setup 9')
+    except Exception:
+        pass
