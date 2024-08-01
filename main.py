@@ -36,8 +36,13 @@ async def process_ticker(ticker):
     ticker, data = await asyncio.to_thread(fetch_data, ticker)
     if data is not None and not data.empty:
         data = td_sequential(data)
-        if data['td_buy_setup'].iloc[-1] == 9:
-            print(f'{ticker} is on a TD Buy Setup 9')
+        td_buy_setup = data['td_buy_setup'].iloc[-1]
+        td_sell_setup = data['td_sell_setup'].iloc[-1]
+
+        if td_buy_setup >= 9 and td_buy_setup<= 13:
+            print(f'{ticker} is on a TD Buy Setup {td_buy_setup}')
+        elif td_sell_setup >= 9 and td_sell_setup <= 13:
+            print(f'{ticker} is on a TD Sell Setup {td_sell_setup}')
 
 async def main():
     tasks = [process_ticker(ticker) for ticker in tickers]
