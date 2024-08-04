@@ -21,14 +21,8 @@ def fetch_data(ticker):
         return ticker, None
 
 def td_sequential(data):
-    data['td_buy_setup'] = 0
-    data['td_sell_setup'] = 0
-
     buy_condition = data['Close'] < data['Close'].shift(4)
-    sell_condition = data['Close'] > data['Close'].shift(4)
-
     data['td_buy_setup'] = buy_condition.groupby((buy_condition != buy_condition.shift()).cumsum()).cumsum()
-    data['td_sell_setup'] = sell_condition.groupby((sell_condition != sell_condition.shift()).cumsum()).cumsum()
 
     return data
 
@@ -37,12 +31,9 @@ async def process_ticker(ticker):
     if data is not None and not data.empty:
         data = td_sequential(data)
         td_buy_setup = data['td_buy_setup'].iloc[-1]
-        td_sell_setup = data['td_sell_setup'].iloc[-1]
 
         if td_buy_setup >= 9 and td_buy_setup<= 13:
             print(f'{ticker} is on a TD Buy Setup {td_buy_setup}')
-        elif td_sell_setup >= 9 and td_sell_setup <= 13:
-            print(f'{ticker} is on a TD Sell Setup {td_sell_setup}')
 
 async def main():
     tasks = [process_ticker(ticker) for ticker in tickers]
