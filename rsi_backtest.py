@@ -11,7 +11,7 @@ def rsi(data):
 
 class RsiStrategy(Strategy):
     def init(self):
-        super.init()
+        super().init()
 
     def next(self):
         if self.data['rsi'][-1] < 30:

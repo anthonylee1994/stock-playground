@@ -10,7 +10,7 @@ def td_sequential(data):
 
 class TdSequentialStrategy(Strategy):
     def init(self):
-        super.init()
+        super().init()
 
     def next(self):
         if 9 == self.data['td_buy_setup'][-1]:

@@ -10,7 +10,7 @@ def bollinger_bands(data, window=20, num_std_dev=2):
 
 class BollingerBandStrategy(Strategy):
     def init(self):
-        super.init()
+        super().init()
 
     def next(self):
         if self.data['Close'][-1] < self.data['lower_band'][-1]:

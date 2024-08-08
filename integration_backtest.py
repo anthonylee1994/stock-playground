@@ -21,7 +21,7 @@ data = bollinger_bands(data)
 
 class IntegrationStrategy(Strategy):
     def init(self):
-        super.init()
+        super().init()
 
     def next(self):
         if 9 == self.data['td_buy_setup'][-1]:

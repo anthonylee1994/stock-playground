@@ -11,7 +11,7 @@ def macd(data):
 
 class MacdStrategy(Strategy):
     def init(self):
-        super.init()
+        super().init()
 
     def next(self):
         if crossover(self.data['macd'], self.data['signal']):
