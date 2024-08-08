@@ -9,9 +9,9 @@ def rsi(data):
     data['rsi'] = 100 - (100 / (1 + rs))
     return data
 
-class RsiBandStrategy(Strategy):
+class RsiStrategy(Strategy):
     def init(self):
-        pass
+        super.init()
 
     def next(self):
         if self.data['rsi'][-1] < 30:
@@ -22,7 +22,7 @@ class RsiBandStrategy(Strategy):
 data = fetch_data("VOO")
 data = rsi(data)
 
-bt = Backtest(data, RsiBandStrategy,
+bt = Backtest(data, RsiStrategy,
               cash=10000, commission=.002,
               exclusive_orders=True)
 

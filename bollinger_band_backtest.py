@@ -10,15 +10,15 @@ def bollinger_bands(data, window=20, num_std_dev=2):
 
 class BollingerBandStrategy(Strategy):
     def init(self):
-        pass
+        super.init()
 
     def next(self):
         if self.data['Close'][-1] < self.data['lower_band'][-1]:
             self.buy()
         if self.data['Close'][-1] > self.data['upper_band'][-1]:
-            self.sell()
+            self.position.close()
 
-data = fetch_data("VOO")
+data = fetch_data("GOOG")
 data = bollinger_bands(data)
 
 bt = Backtest(data, BollingerBandStrategy,

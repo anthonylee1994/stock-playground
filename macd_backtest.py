@@ -9,9 +9,9 @@ def macd(data):
     data['signal'] = data['macd'].ewm(span=9, adjust=False).mean()
     return data
 
-class MacdBandStrategy(Strategy):
+class MacdStrategy(Strategy):
     def init(self):
-        pass
+        super.init()
 
     def next(self):
         if crossover(self.data['macd'], self.data['signal']):
@@ -19,10 +19,10 @@ class MacdBandStrategy(Strategy):
         if crossover(self.data['signal'], self.data['macd']):
             self.sell()
 
-data = fetch_data("VOO")
+data = fetch_data("GOOG")
 data = macd(data)
 
-bt = Backtest(data, MacdBandStrategy,
+bt = Backtest(data, MacdStrategy,
               cash=10000, commission=.002,
               exclusive_orders=True)
 
